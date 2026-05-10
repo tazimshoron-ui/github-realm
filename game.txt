@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Realm of the Rising Grades</title>
+<style>
+    body {
+        margin: 0;
+        font-family: 'Georgia', serif;
+        background: radial-gradient(circle at top, #1a1a2e, #0d0d0d);
+        color: #f5f5dc;
+    }
+
+    header {
+        text-align: center;
+        padding: 20px;
+        background: #111;
+        border-bottom: 2px solid gold;
+    }
+
+    h1 {
+        margin: 0;
+        color: gold;
+        letter-spacing: 2px;
+    }
+
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .card {
+        background: #1e1e2f;
+        border: 1px solid gold;
+        border-radius: 10px;
+        margin: 10px;
+        padding: 15px;
+        width: 300px;
+    }
+
+    .quest {
+        margin: 5px 0;
+        padding: 5px;
+        background: #2a2a40;
+        border-radius: 5px;
+    }
+
+    button {
+        background: gold;
+        border: none;
+        padding: 5px;
+        cursor: pointer;
+        margin-left: 5px;
+        font-weight: bold;
+    }
+
+    .stats {
+        text-align: center;
+        padding: 10px;
+        font-size: 18px;
+    }
+
+</style>
+</head>
+<body>
+
+<header>
+    <h1>⚔️ Realm of the Rising Grades ⚔️</h1>
+    <div class="stats">
+        You: Level <span id="lvl1">1</span> | XP: <span id="xp1">0</span>  
+        &nbsp;&nbsp; | &nbsp;&nbsp;
+        Friend: Level <span id="lvl2">1</span> | XP: <span id="xp2">0</span>
+    </div>
+</header>
+
+<div class="container" id="game"></div>
+
+<script>
+let data = JSON.parse(localStorage.getItem("rpg")) || {
+    You: {xp:0},
+    Friend: {xp:0}
+};
+
+function level(xp){
+    return Math.floor(xp / 100) + 1;
+}
+
+const subjects = {
+    "Physics": ["Motion Awakening","Force Trials","Energy Rise"],
+    "Chemistry": ["Element Origins","Atomic Structure","Bonding Forces"],
+    "Math": ["Algebra Trials","Geometry Land","Calculus Rise"],
+    "Biology": ["Cell Awakening","Genetics Gate","Human System"],
+    "ICT": ["Digital Awakening","Programming Path","Database Dungeon"]
+};
+
+const container = document.getElementById("game");
+
+function render(){
+    container.innerHTML = "";
+
+    for(let subject in subjects){
+        let card = document.createElement("div");
+        card.className = "card";
+
+        let title = document.createElement("h3");
+        title.innerText = subject;
+        card.appendChild(title);
+
+        subjects[subject].forEach(q => {
+            let div = document.createElement("div");
+            div.className = "quest";
+            div.innerHTML = `
+                ${q}
+                <button onclick="complete('You')">You +10 XP</button>
+                <button onclick="complete('Friend')">Friend +10 XP</button>
+            `;
+            card.appendChild(div);
+        });
+
+        container.appendChild(card);
+    }
+
+    updateStats();
+}
+
+function complete(player){
+    data[player].xp += 10;
+    localStorage.setItem("rpg", JSON.stringify(data));
+    updateStats();
+}
+
+function updateStats(){
+    document.getElementById("xp1").innerText = data.You.xp;
+    document.getElementById("xp2").innerText = data.Friend.xp;
+
+    document.getElementById("lvl1").innerText = level(data.You.xp);
+    document.getElementById("lvl2").innerText = level(data.Friend.xp);
+}
+
+render();
+</script>
+
+</body>
+</html>
